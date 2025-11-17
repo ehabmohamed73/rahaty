@@ -12,6 +12,7 @@ export default function BookingInday() {
   const [visitType, setVisitType] = useState("monthly");
   useEffect(() => {
     window.scrollTo(0, 0);
+    console.log("BookingInday mounted");
   }, []);
   // ============================
   // FAKE TOTAL PRICE CALCULATION
