@@ -1,15 +1,35 @@
 import React, { useState, useEffect } from "react";
-import { MapPin, Plus } from "lucide-react";
+import { Book, MapPin, Plus } from "lucide-react";
 import TopNavbar from "../Nav/TopNavbar";
-
+import BookingCalendar from "../Elements/BookingCalender";
+import { useNavigate } from "react-router-dom";
 export default function BookingInday() {
   // ============================
   // STATES
   // ============================
   const [workers, setWorkers] = useState(1);
   const [visitDuration, setVisitDuration] = useState("morning");
-  const [selectedTime, setSelectedTime] = useState("09:00 - 13:00");
-  const [visitType, setVisitType] = useState("monthly");
+  const [selectedTime, setSelectedTime] = useState("");
+  const [visitType, setVisitType] = useState("");
+  const [selectedDates, setSelectedDates] = useState([]);
+  const [mothlyPackage, setMonthlyPackage] = useState("");
+  const [hasAddress, setHasAddress] = useState(false);
+  const navigate = useNavigate();
+  // تنسيق التاريخ المختار
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("ar", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  // ============================
+  // SCROLL TO TOP ON MOUNT
+  // ============================
   useEffect(() => {
     window.scrollTo(0, 0);
     console.log("BookingInday mounted");
@@ -101,7 +121,6 @@ export default function BookingInday() {
                 </button>
               </div>
             </div>
-
             {/* VISIT DURATION */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h3 className="font-bold mb-4">مدة الزيارة</h3>
@@ -144,34 +163,86 @@ export default function BookingInday() {
                 </button>
               </div>
             </div>
-
             {/* AVAILABLE TIMES */}
+
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h3 className="font-bold mb-4">الفترات المتوفرة</h3>
+              {visitDuration === "morning" && (
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setSelectedTime("09:00 - 01:00")}
+                    className={`py-3 rounded-lg border ${
+                      selectedTime === "09:00 - 01:00"
+                        ? "bg-orange-50 border-orange-500 text-orange-600"
+                        : "border-gray-300"
+                    }`}
+                  >
+                    09:00 - 01:00
+                  </button>
 
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => setSelectedTime("11:00 - 15:00")}
-                  className={`py-3 rounded-lg border ${
-                    selectedTime === "11:00 - 15:00"
-                      ? "bg-orange-50 border-orange-500 text-orange-600"
-                      : "border-gray-300"
-                  }`}
-                >
-                  11:00 - 15:00
-                </button>
+                  <button
+                    onClick={() => setSelectedTime("02:00 - 06:00")}
+                    className={`py-3 rounded-lg border ${
+                      selectedTime === "02:00 - 06:00"
+                        ? "bg-orange-50 border-orange-500 text-orange-600"
+                        : "border-gray-300"
+                    }`}
+                  >
+                    02:00 - 06:00
+                  </button>
+                </div>
+              )}
+              {/* الفتره المسائيه */}
+              {visitDuration === "evening" && (
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setSelectedTime("06:00 - 10:00")}
+                    className={`py-3 rounded-lg border ${
+                      selectedTime === "06:00 - 10:00"
+                        ? "bg-orange-50 border-orange-500 text-orange-600"
+                        : "border-gray-300"
+                    }`}
+                  >
+                    06:00 - 10:00
+                  </button>
 
-                <button
-                  onClick={() => setSelectedTime("09:00 - 13:00")}
-                  className={`py-3 rounded-lg border ${
-                    selectedTime === "09:00 - 13:00"
-                      ? "bg-orange-50 border-orange-500 text-orange-600"
-                      : "border-gray-300"
-                  }`}
-                >
-                  09:00 - 13:00
-                </button>
-              </div>
+                  <button
+                    onClick={() => setSelectedTime("05:00 - 09:00")}
+                    className={`py-3 rounded-lg border ${
+                      selectedTime === "05:00 - 09:00"
+                        ? "bg-orange-50 border-orange-500 text-orange-600"
+                        : "border-gray-300"
+                    }`}
+                  >
+                    05:00 - 09:00
+                  </button>
+                </div>
+              )}
+              {visitDuration === "full" && (
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setSelectedTime("09:00 - 06:00")}
+                    className={`py-3 rounded-lg border ${
+                      selectedTime === "09:00 - 06:00"
+                        ? "bg-orange-50 border-orange-500 text-orange-600"
+                        : "border-gray-300"
+                    }`}
+                  >
+                    09:00 - 06:00
+                  </button>
+
+                  <button
+                    onClick={() => setSelectedTime("01:00 - 09:00")}
+                    className={`py-3 rounded-lg border ${
+                      selectedTime === "01:00 - 09:00"
+                        ? "bg-orange-50 border-orange-500 text-orange-600"
+                        : "border-gray-300"
+                    }`}
+                  >
+                    01:00 - 09:00
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* VISIT TYPE */}
@@ -204,27 +275,91 @@ export default function BookingInday() {
             </div>
           </div>
           {/* ============================ COLUMN 2 (RIGHT SIDE) ============================ */}
-          <div className="space-y-6">
-            {/* SELECT ADDRESS */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-blue-700">
-                  اختر العنوان
-                </h2>
-              </div>
+          <div className="bg-white rounded-lg shadow-sm h-fit">
+            {hasAddress && (
+              <div className="space-y-6">
+                {/* SELECT ADDRESS */}
+                {visitType === "monthly" && (
+                  <div className="p-6">
+                    <h2 className="text-xl font-bold text-blue-700 mb-4">
+                      نوع الباقه الشهريه{" "}
+                    </h2>
 
-              <div className="flex flex-col items-center justify-center py-12">
-                <MapPin className="w-24 h-24 text-gray-300 mb-4" />
-                <p className="text-gray-500 text-center">
-                  لا توجد أي عناوين مسجلة
-                </p>
-                <button className="mt-6 bg-blue-900 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-800 transition">
-                  إضافة عنوان جديد
-                </button>
+                    <div className="grid grid-cols-3 gap-2">
+                      <button
+                        onClick={() => setMonthlyPackage("economic")}
+                        className={`py-3 rounded-lg border ${
+                          mothlyPackage === "economic"
+                            ? "bg-orange-50 border-orange-500 text-orange-600"
+                            : "border-gray-300"
+                        }`}
+                      >
+                        الاقتصاديه <br />
+                        <span className="text-[10px]">زياره في الشهر</span>
+                      </button>
+
+                      <button
+                        onClick={() => setMonthlyPackage("proznic")}
+                        className={`py-3 rounded-lg border ${
+                          mothlyPackage === "proznic"
+                            ? "bg-orange-50 border-orange-500 text-orange-600"
+                            : "border-gray-300"
+                        }`}
+                      >
+                        البرونزي
+                        <br />
+                        <span className="text-[10px]">زيارتين في الشهر</span>
+                      </button>
+
+                      <button
+                        onClick={() => setMonthlyPackage("selver")}
+                        className={`py-3 rounded-lg border ${
+                          mothlyPackage === "selver"
+                            ? "bg-orange-50 border-orange-500 text-orange-600"
+                            : "border-gray-300"
+                        }`}
+                      >
+                        الفضي <br />
+                        <span className="text-xs">٣ زيارات في الشهر </span>
+                      </button>
+                      <button
+                        onClick={() => setMonthlyPackage("goolden")}
+                        className={`py-3 rounded-lg border ${
+                          mothlyPackage === "goolden"
+                            ? "bg-orange-50 border-orange-500 text-orange-600"
+                            : "border-gray-300"
+                        }`}
+                      >
+                        الذهبي <br />
+                        <span className="text-xs">٤ زيارات في الشهر </span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {visitType === "single" && (
+                  <div className="p-2">
+                    <BookingCalendar onSelectDates={setSelectedDates} />
+                  </div>
+                )}
               </div>
-            </div>
+            )}
+            {!hasAddress && (
+              <div className="space-y-6">
+                <div className="flex flex-col items-center justify-center py-12">
+                  <MapPin className="w-24 h-24 text-gray-300 mb-4" />
+                  <p className="text-gray-500 text-center">
+                    لا توجد أي عناوين مسجلة
+                  </p>
+                  <button
+                    onClick={() => setHasAddress(true)}
+                    className="mt-6 bg-blue-900 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-800 transition"
+                  >
+                    إضافة عنوان جديد
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-
           {/* ============================ COLUMN 3 (SUMMARY) ============================ */}
           <div className="bg-white rounded-lg shadow-sm p-6 h-fit">
             <h3 className="font-bold mb-4">ملخص الطلب</h3>
@@ -245,8 +380,26 @@ export default function BookingInday() {
                 <span>{selectedTime}</span>
               </div>
             </div>
-
-            <button className="w-full bg-blue-900 text-white py-3 rounded-lg font-semibold hover:bg-blue-800 transition">
+            {selectedDates.length > 0 && (
+              <div className="">
+                <div className="flex flex-col items-start ">
+                  <div>
+                    <p className="text-[12px] text-primary">
+                      التواريخ المختارة:
+                    </p>
+                    {selectedDates.map((date, index) => (
+                      <p index={index} className="text-[10px]  text-secondary">
+                        {formatDate(date)}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            <button
+              onClick={() => navigate("/confirm-payment")}
+              className="w-full bg-brandBlue text-white py-3 rounded-lg font-semibold hover:bg-secondary transition"
+            >
               التالي
             </button>
           </div>
