@@ -1,10 +1,16 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { Check, Clock, Users, Calendar, FileText } from "lucide-react";
 
 function ConfirmPayment() {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [orderCompleted, setOrderCompleted] = useState(false);
-
+  // ============================
+  // SCROLL TO TOP ON MOUNT
+  // ============================
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    console.log("BookingInday mounted");
+  }, []);
   // بيانات الطلب الافتراضية (يمكن استبدالها بالبيانات الفعلية)
   const orderDetails = {
     workers: 2,
