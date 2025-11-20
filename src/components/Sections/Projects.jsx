@@ -29,7 +29,7 @@ export default function Projects() {
     },
     {
       img: joinusimage,
-      path: "/booking-in-day",
+      path: "/join-us",
       title: "انظم الينا",
       text: "انضم إلى فريقنا من المحترفين في التنظيف وابدأ مسيرتك معنا.",
     },
