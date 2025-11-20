@@ -148,7 +148,7 @@ export default function JoinUsPage() {
                 value={formData.name}
                 onChange={handleInputChange}
                 required
-                className="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white/80"
+                className="w-full text-black p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white/80"
                 placeholder="أدخل اسمك الكامل"
               />
             </div>
