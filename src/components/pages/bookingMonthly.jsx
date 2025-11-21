@@ -201,7 +201,7 @@ export default function BookingMonthly() {
                     disabled
                     type="date"
                     defaultValue={today}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    className="w-full text-[10px] sm:text-1sm px-4 py-2 border border-gray-300 rounded-lg"
                   />
                 </div>
               </div>
@@ -353,7 +353,7 @@ const CustomDropdown = ({ value, onChange, options, placeholder, name }) => {
       <button
         type="button"
         onClick={() => setOpenDropdown(isOpen ? null : name)}
-        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-right flex items-center justify-between hover:border-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        className="w-full px-4 py-2.5 text-[10px] sm:text-1sm border border-gray-300 rounded-lg bg-white text-right flex items-center justify-between hover:border-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       >
         <ChevronDown
           className={`w-4 h-4 text-gray-400 transition-transform ${
