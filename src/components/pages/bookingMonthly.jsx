@@ -240,7 +240,7 @@ export default function BookingMonthly() {
               {cityLocation && (
                 <div className="grid grid-cols-1 md:grid-cols-1 h-71 overflow-auto gap-4">
                   {staffMembers.map((staff) => (
-                    <div key={staff.id} className="p-2 w-full">
+                    <div key={staff.id} className=" sm:p-2 w-full">
                       <div className="flex items-center justify-between">
                         {/* chake box start */}
                         <button
@@ -263,7 +263,7 @@ export default function BookingMonthly() {
                             <User className="w-6 h-6 text-blue-900" />
                           </div>
                           <div className="text-right">
-                            <div className="font-bold text-gray-800">
+                            <div className="text-[10px] sm:text-1sm sm:font-bold text-gray-800">
                               {staff.name}
                             </div>
                             <div className="text-sm text-gray-500">
@@ -272,16 +272,18 @@ export default function BookingMonthly() {
                           </div>
                         </div>
                         {/* name and age image end */}
-                        <div className="text-right space-y-2">
+                        <div className="text-right  space-y-2">
                           <div>
-                            <div className="text-xs text-gray-500">الخبرة</div>
-                            <div className="text-sm font-medium">
+                            <div className="text-xs text-[10px] sm:text-1sm text-gray-500">
+                              الخبرة
+                            </div>
+                            <div className="text-sm text-[10px] sm:text-1sm font-medium">
                               {staff.experience}
                             </div>
                           </div>
                         </div>
-                        <div className="space-y-2  text-right mr-4">
-                          <button className="text-sm text-orange-500 hover:text-orange-600">
+                        <div className="space-y-2 text-[10px] sm:text-1sm text-right mr-4">
+                          <button className="text-sm text-orange-500 text-[10px] sm:text-1sm hover:text-orange-600">
                             تفاصيل اكثر
                           </button>
                         </div>
