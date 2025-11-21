@@ -26,4 +26,3 @@ const Wrapper = styled.button`
     color: ${(props) => (props.border ? "#7620ff" : "#fff")};
   }
 `;
-

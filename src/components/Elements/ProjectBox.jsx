@@ -18,8 +18,7 @@ export default function ProjectBox({ img, title, text, action }) {
 
 const Wrapper = styled.div`
   width: 100%;
-  margin-top: 30px;
-  padding: 20px;
+  padding: 8px;
   border: 1px solid #e6e6e6;
   border-radius: 8px;
   box-shadow: 1px 1px 20px rgba(0, 0, 0, 0.1);

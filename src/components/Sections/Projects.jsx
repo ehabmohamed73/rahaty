@@ -17,7 +17,7 @@ export default function Projects() {
     },
     {
       img: monthimage,
-      path: "",
+      path: "/booking-monthly",
       title: "حجز في الشهر",
       text: "خدمة تنظيف دورية لمنزلك أو مكتبك على أساس شهري.",
     },

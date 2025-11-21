@@ -8,9 +8,6 @@ import {
   Send,
   Upload,
   CheckCircle,
-  Award,
-  Clock,
-  DollarSign,
 } from "lucide-react";
 import bg from "../../assets/img/join-us.jpg";
 export default function JoinUsPage() {
