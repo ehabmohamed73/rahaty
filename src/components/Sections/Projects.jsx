@@ -23,7 +23,7 @@ export default function Projects() {
     },
     {
       img: hospitalityimage,
-      path: "/booking-in-day",
+      path: "/hospitality-booking",
       title: "حجز ضيافة",
       text: "خدمة تنظيف متخصصه لضمان بيئة نظيفة وصحية للضيوف.",
     },

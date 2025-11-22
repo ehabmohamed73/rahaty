@@ -5,6 +5,7 @@ import BookingInday from "./components/pages/bookingInDay";
 import ConfirmPayment from "./components/pages/confirmPayment";
 import JoinUsPage from "./components/pages/joinUs";
 import BookingMonthly from "./components/pages/bookingMonthly";
+import HospitalityBooking from "./components/pages/hospitalityBooking";
 import "./index.css";
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -15,6 +16,7 @@ const router = createBrowserRouter([
   { path: "/confirm-payment", element: <ConfirmPayment /> },
   { path: "/join-us", element: <JoinUsPage /> },
   { path: "/booking-monthly", element: <BookingMonthly /> },
+  { path: "/hospitality-booking", element: <HospitalityBooking /> },
 ]);
 function App() {
   return <RouterProvider router={router} />;
