@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-scroll";
 import Sidebar from "../Nav/Sidebar";
@@ -6,12 +6,12 @@ import Backdrop from "../Elements/Backdrop";
 import LogoIcon from "../../assets/svg/Logo";
 import BurgerIcon from "../../assets/svg/BurgerIcon";
 import { useNavigate } from "react-router-dom";
-
+import { User } from "lucide-react";
 export default function TopNavbar() {
   const [y, setY] = useState(window.scrollY);
   const navigate = useNavigate();
   const [sidebarOpen, toggleSidebar] = useState(false);
-
+  const [isSignIn, setSignIn] = useState(true);
   useEffect(() => {
     const handleScroll = () => setY(window.scrollY);
     window.addEventListener("scroll", handleScroll);
@@ -90,28 +90,39 @@ export default function TopNavbar() {
           {/* Login Button */}
           <UlWrapperRight className="flexNullCenter">
             <li className="list-none">
-              <button
-                onClick={() => navigate("/login")}
-                className="h-10 w-50 group relative inline-flex items-center justify-center px-8 py-3 font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-full overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-105"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  تسجيل الدخول
-                  <svg
-                    className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
-                    />
-                  </svg>
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </button>
+              {!isSignIn ? (
+                <button
+                  onClick={() => navigate("/login")}
+                  className="h-10 w-50 group relative inline-flex items-center justify-center px-8 py-3 font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-full overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-105"
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    تسجيل الدخول
+                    <svg
+                      className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                      />
+                    </svg>
+                  </span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => navigate("/profile")}
+                  className="h-auto w-auto group relative inline-flex items-center justify-center px-8 py-3 font-semibold text-white bg-linear-to-r from-purple-600 to-blue-600 rounded-full overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-105"
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    Ehab
+                  </span>
+                  <User />
+                </button>
+              )}
             </li>
           </UlWrapperRight>
         </NavInner>

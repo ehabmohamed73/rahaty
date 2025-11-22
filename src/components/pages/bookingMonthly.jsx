@@ -199,9 +199,9 @@ export default function BookingMonthly() {
                 <div className="relative">
                   <input
                     disabled
-                    type="date"
+                    type="text"
                     defaultValue={today}
-                    className="w-full text-[8px] sm:text-sm px-4 py-2 border border-gray-300 rounded-lg"
+                    className="w-full text-[8px] text-center sm:text-sm px-4 py-2 border border-gray-300 rounded-lg"
                   />
                 </div>
               </div>
@@ -230,8 +230,8 @@ export default function BookingMonthly() {
                   onClick={() => setSelectedService("kidcare")}
                   className={`py-3 rounded-lg  ${
                     selectedService === "kidcare"
-                      ? "px-4 py-2 border text-sm font-medium text-gray-500 hover:text-gray-700"
-                      : "px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700"
+                      ? "px-4 py-2 border text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-700"
+                      : "px-4 py-2 text-sm font-medium "
                   }`}
                 >
                   العناية بالاطفال
