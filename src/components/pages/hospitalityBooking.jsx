@@ -3,7 +3,12 @@ import { Book, MapPin, Plus } from "lucide-react";
 import TopNavbar from "../Nav/TopNavbar";
 import BookingCalendar from "../Elements/BookingCalender";
 import { useNavigate } from "react-router-dom";
-import { eightHours, fourHours, sixHours } from "../constants/staticData";
+import {
+  eightHours,
+  fourHours,
+  sixHours,
+  addressesList,
+} from "../constants/staticData";
 export default function HospitalityBooking() {
   // ============================
   // STATES
@@ -14,7 +19,8 @@ export default function HospitalityBooking() {
   //   const [visitType, setVisitType] = useState("");
   const [selectedDates, setSelectedDates] = useState([]);
   //   const [mothlyPackage, setMonthlyPackage] = useState("");
-  const [hasAddress, setHasAddress] = useState(false);
+  const [hasAddress, setHasAddress] = useState(addressesList);
+  const [addressSelected, setAddressSelected] = useState(false);
   const navigate = useNavigate();
   // تنسيق التاريخ المختار
   const formatDate = (dateString) => {
@@ -253,8 +259,28 @@ export default function HospitalityBooking() {
             </div> */}
           </div>
           {/* ============================ COLUMN 2 (RIGHT SIDE) ============================ */}
-          <div className="bg-white rounded-lg shadow-sm h-fit">
-            {hasAddress && (
+          <div className="bg-white rounded-lg shadow-sm h-120">
+            {hasAddress.length > 0 &&
+              !addressSelected &&
+              hasAddress.map((address) => (
+                <div
+                  onClick={() => setAddressSelected(true)}
+                  key={address.id}
+                  className=" bg-lightGray rounded-lg p-4 m-4"
+                >
+                  <div className="flex justify-between items-start ">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-gray-800 mb-2">
+                        {address.addressName}
+                      </h3>
+                      <p className="text-gray-600 text-sm">
+                        {address.fullAddress}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            {addressSelected && (
               <div className="space-y-6">
                 {/* SELECT ADDRESS */}
 

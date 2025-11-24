@@ -35,3 +35,18 @@ export const eightHours = [
   "17:00",
   "18:00",
 ];
+
+export const addressesList = [
+  {
+    id: 1,
+    addressName: "مكتب",
+    region: "الشرقيه",
+    city: "حلب",
+    citySelect: "حلب",
+    neighborhood: "يل ص",
+    buildingNumber: "9634",
+    streetName: "القدس",
+    detailedAddress: "تفاصيل ",
+    fullAddress: "المنطقة الشرقية، الهفوف والمبرز، الهفوف - السلامية الجنوبية",
+  },
+];

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
 import { Link } from "react-scroll";
 import Sidebar from "../Nav/Sidebar";
@@ -7,21 +7,49 @@ import LogoIcon from "../../assets/svg/Logo";
 import BurgerIcon from "../../assets/svg/BurgerIcon";
 import { useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
-export default function TopNavbar() {
+
+export default function TopNavbar({ userName = "Ehab" }) {
   const [y, setY] = useState(window.scrollY);
   const navigate = useNavigate();
   const [sidebarOpen, toggleSidebar] = useState(false);
-  const [isSignIn, setSignIn] = useState(true);
-  useEffect(() => {
-    const handleScroll = () => setY(window.scrollY);
-    window.addEventListener("scroll", handleScroll);
+  // const [isSignIn, setSignIn] = useState(isSignedUser);
+  const isSignedIn = localStorage.getItem("isSignedIn") === "true";
+  const storedName = localStorage.getItem("username") || userName;
 
+  // Sync with prop changes
+  // useEffect(() => {
+  //   setSignIn(isSignedUser);
+  // }, [isSignedUser]);
+
+  // Throttled scroll handler
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          setY(window.scrollY);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleSidebarToggle = useCallback(() => {
+    toggleSidebar((prev) => !prev);
   }, []);
 
   return (
     <>
-      <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      <Sidebar
+        sidebarOpen={sidebarOpen}
+        toggleSidebar={toggleSidebar}
+        isSignedIn={isSignedIn}
+        userName={storedName}
+      />
       {sidebarOpen && <Backdrop toggleSidebar={toggleSidebar} />}
 
       <Wrapper
@@ -30,20 +58,25 @@ export default function TopNavbar() {
       >
         <NavInner className="container flexSpaceCenter">
           {/* Logo */}
-          <Link className="pointer flexNullCenter" to="home" smooth={true}>
+          <Link
+            className="pointer flexNullCenter"
+            to="home"
+            smooth={true}
+            aria-label="الرئيسية"
+          >
             <LogoIcon />
-            <h1 style={{ marginLeft: "15px" }} className="font20 extraBold">
-              you logo
-            </h1>
+            <h1 className="font20 extraBold mr-4">راحتي</h1>
           </Link>
 
           {/* Mobile Menu Button */}
-          <BurderWrapper
+          <BurgerWrapper
             className="pointer"
-            onClick={() => toggleSidebar(!sidebarOpen)}
+            onClick={handleSidebarToggle}
+            aria-label="فتح القائمة"
+            type="button"
           >
             <BurgerIcon />
-          </BurderWrapper>
+          </BurgerWrapper>
 
           {/* Main Menu */}
           <UlWrapper className="flexNullCenter">
@@ -90,10 +123,11 @@ export default function TopNavbar() {
           {/* Login Button */}
           <UlWrapperRight className="flexNullCenter">
             <li className="list-none">
-              {!isSignIn ? (
+              {!isSignedIn ? (
                 <button
                   onClick={() => navigate("/login")}
-                  className="h-10 w-50 group relative inline-flex items-center justify-center px-8 py-3 font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-full overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-105"
+                  className="h-10 w-50 group relative inline-flex items-center justify-center px-8 py-3 font-semibold text-white bg-linear-to-r from-purple-600 to-blue-600 rounded-full overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-105"
+                  aria-label="تسجيل الدخول"
                 >
                   <span className="relative z-10 flex items-center gap-2">
                     تسجيل الدخول
@@ -115,12 +149,13 @@ export default function TopNavbar() {
               ) : (
                 <button
                   onClick={() => navigate("/profile")}
-                  className="h-auto w-auto group relative inline-flex items-center justify-center px-8 py-3 font-semibold text-white bg-linear-to-r from-purple-600 to-blue-600 rounded-full overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-105"
+                  className="h-10 px-8 py-3 group relative inline-flex items-center justify-center font-semibold text-white bg-linear-to-r from-purple-600 to-blue-600 rounded-full overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-105"
+                  aria-label="الملف الشخصي"
                 >
                   <span className="relative z-10 flex items-center gap-2">
-                    Ehab
+                    {storedName}
+                    <User size={18} />
                   </span>
-                  <User />
                 </button>
               )}
             </li>
@@ -131,7 +166,7 @@ export default function TopNavbar() {
   );
 }
 
-// Styled Components
+// Styled Components (fixed typo in BurgerWrapper)
 const Wrapper = styled.nav`
   width: 100%;
   position: fixed;
@@ -146,7 +181,7 @@ const NavInner = styled.div`
   height: 100%;
 `;
 
-const BurderWrapper = styled.button`
+const BurgerWrapper = styled.button`
   outline: none;
   border: 0px;
   background-color: transparent;

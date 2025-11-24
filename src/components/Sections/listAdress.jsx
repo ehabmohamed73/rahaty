@@ -1,16 +1,10 @@
 import { useState } from "react";
 import { Trash2, Edit } from "lucide-react";
 import AddAddressModal from "../Sections/AddAddress";
-
+import { addressesList } from "../constants/staticData";
 export default function ListAddress() {
   const [openPopUp, setOpenPopUp] = useState(false);
-  const [addresses, setAddresses] = useState([
-    {
-      id: 1,
-      title: "مكتب",
-      details: "المنطقة الشرقية، الهفوف والمبرز، الهفوف - السلامية الجنوبية",
-    },
-  ]);
+  const [addresses, setAddresses] = useState(addressesList);
 
   const deleteAddress = (id) => {
     setAddresses(addresses.filter((addr) => addr.id !== id));
@@ -19,8 +13,9 @@ export default function ListAddress() {
   const handleAddAddress = (newAddress) => {
     const newAddr = {
       id: Date.now(),
-      title: newAddress.addressName,
-      details: newAddress.fullAddress,
+      addressName: newAddress.addressName,
+      fullAddress: newAddress.fullAddress,
+      detailedAddress: newAddress.detailedAddress,
     };
     setAddresses((prev) => [...prev, newAddr]);
     setOpenPopUp(false); // إغلاق البوب اب بعد الإضافة
@@ -44,9 +39,9 @@ export default function ListAddress() {
           <div className="flex justify-between items-start ">
             <div className="flex-1">
               <h3 className="text-lg font-bold text-gray-800 mb-2">
-                {address.title}
+                {address.addressName}
               </h3>
-              <p className="text-gray-600 text-sm">{address.details}</p>
+              <p className="text-gray-600 text-sm">{address.fullAddress}</p>
             </div>
             <div className="flex gap-2 mr-4">
               <button className="p-2 text-blue-500 hover:bg-blue-50 rounded transition">
