@@ -11,7 +11,7 @@ export default function ProfilePage() {
       <TopNavbar />
       <div className="mt-20 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* قسم الملف الشخصي - العمود الأيمن */}
-        <div className="lg:col-span-1 bg-white h-112 rounded-lg shadow-md p-6">
+        <div className="lg:col-span-1 bg-white  rounded-lg shadow-md p-6">
           <div className="flex flex-col items-center">
             <div className="w-32 h-32 bg-linear-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
               <UserRoundPen size={48} />
@@ -100,6 +100,29 @@ export default function ProfilePage() {
                 }`}
               >
                 فواتيري
+              </span>
+            </button>
+            <button
+              onClick={() => {
+                localStorage.setItem("isSignedIn", "false");
+              }}
+              className="w-full flex items-center  p-3 hover:bg-gray-50 rounded-lg transition group"
+            >
+              <svg
+                className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                />
+              </svg>
+              <span className="font-semibold mr-2 text-gray-700 group-hover:text-orange-500 ">
+                تسجيل الخروج
               </span>
             </button>
           </div>

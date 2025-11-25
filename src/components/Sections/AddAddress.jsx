@@ -27,13 +27,15 @@ export default function AddAddressModal({ isOpen, onClose, onSave }) {
 
   return (
     <div
-      className="fixed top-30 sm:top-16 inset-0 bg-transparent   flex items-center justify-center p-4 z-50"
+      className="fixed top-30 sm:top-16 inset-0 bg-transparent flex items-center justify-center p-2 sm:p-4 z-50"
       dir="rtl"
     >
-      <div className="bg-white rounded-lg w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col shadow-2xl">
+      <div className="bg-white rounded-lg w-full max-w-6xl max-h-[90vh] overflow-auto flex flex-col shadow-2xl">
         {/* الهيدر */}
         <div className="flex justify-between items-center p-6 border-b">
-          <h2 className="text-2xl font-bold text-gray-800">إضافة عنوان جديد</h2>
+          <h2 className="texet-sm sm:text-2xl font-bold text-gray-800">
+            إضافة عنوان جديد
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition"
@@ -122,7 +124,7 @@ export default function AddAddressModal({ isOpen, onClose, onSave }) {
                     </label>
                     <input
                       type="text"
-                      placeholder="الفصيلية"
+                      placeholder="حلب"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
@@ -151,7 +153,7 @@ export default function AddAddressModal({ isOpen, onClose, onSave }) {
                         fullAddress: e.target.value,
                       })
                     }
-                    rows={3}
+                    rows={2}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                   />
                 </div>
@@ -160,7 +162,7 @@ export default function AddAddressModal({ isOpen, onClose, onSave }) {
 
             {/* الخريطة - الجانب الأيسر */}
             <div className="bg-gray-100 p-4 lg:p-6 order-2 lg:order-2">
-              <div className="relative w-full h-[400px] lg:h-full bg-gray-200 rounded-lg overflow-hidden">
+              <div className="relative w-full h-[300px] sm:h-[400px] lg:h-full bg-gray-200 rounded-lg overflow-hidden">
                 {/* الخريطة المدمجة من Google Maps */}
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3573.123456789!2d49.5677!3d25.3611!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjXCsDIxJzQwLjAiTiA0OcKwMzQnMDMuNyJF!5e0!3m2!1sen!2ssa!4v1234567890"
@@ -201,10 +203,10 @@ export default function AddAddressModal({ isOpen, onClose, onSave }) {
         </div>
 
         {/* الفوتر */}
-        <div className="border-t p-6 flex items-center justify-between bg-gray-50">
+        <div className="border-t mb-3 p-2 sm:mb-0 sm:p-6 flex items-center justify-between bg-gray-50">
           <button
             onClick={handleSubmit}
-            className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-12 rounded-lg transition"
+            className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 ms:py-3 px-8 sm:px-12 rounded-lg transition"
           >
             حفظ العنوان
           </button>
