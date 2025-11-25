@@ -12,9 +12,7 @@ export default function Services() {
       <div className="whiteBg" style={{ padding: "60px 0" }}>
         <div className="container">
           <HeaderInfo>
-            <h1 className="font40 extraBold text-center">
-              ما نقدمه ايدي معينه
-            </h1>
+            <h1 className="font40 extraBold text-center">ما نقدمه في راحتي</h1>
           </HeaderInfo>
           <ServiceBoxRow className="flex">
             <ServiceBoxWrapper>

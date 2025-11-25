@@ -54,7 +54,7 @@ export default function Footer() {
           <div>
             <h3 className="text-xl font-bold mb-6 relative inline-block">
               روابط سريعة
-              <span className="absolute bottom-0 right-0 w-16 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></span>
+              <span className="absolute bottom-0 right-0 w-16 h-1 bg-linear-to-r from-purple-500 to-pink-500 rounded-full"></span>
             </h3>
             <ul className="space-y-3">
               {[
@@ -81,7 +81,7 @@ export default function Footer() {
           <div>
             <h3 className="text-xl font-bold mb-6 relative inline-block">
               تابعنا
-              <span className="absolute bottom-0 right-0 w-16 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></span>
+              <span className="absolute bottom-0 right-0 w-16 h-1 bg-linear-to-r from-purple-500 to-pink-500 rounded-full"></span>
             </h3>
             <p className="text-gray-300 mb-6">
               تابعنا على وسائل التواصل الاجتماعي للحصول على آخر التحديثات
@@ -139,7 +139,7 @@ export default function Footer() {
         <div className="border-t border-white/10 mt-12 pt-8 text-center">
           <p className="text-gray-400">
             جميع الحقوق محفوظة © {new Date().getFullYear()}
-            <span className="text-purple-400 font-semibold mx-2"> Ehab </span>|
+            <span className="text-purple-400 font-semibold mx-2"> راحتي </span>|
           </p>
           <p> صنع بكل ❤️ من قبل Ehab</p>
         </div>
