@@ -16,6 +16,9 @@ export default function BookingInday() {
   const [mothlyPackage, setMonthlyPackage] = useState("");
   const [hasAddress, setHasAddress] = useState(addressesList);
   const [addressSelected, setAddressSelected] = useState(false);
+  const [isSignedIn] = useState(() => {
+    return localStorage.getItem("isSignedIn") === "true";
+  });
   const navigate = useNavigate();
   // تنسيق التاريخ المختار
   const formatDate = (dateString) => {
@@ -27,6 +30,10 @@ export default function BookingInday() {
       month: "long",
       day: "numeric",
     });
+  };
+  /// التحكم في زر المتابعه
+  const handelNext = () => {
+    navigate(isSignedIn ? "/confirm-payment" : "/confirm-phone");
   };
 
   // ============================
@@ -96,7 +103,7 @@ export default function BookingInday() {
             <div className="bg-white rounded-lg shadow-sm p-6">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-gray-600">{workers}</span>
-                <h3 className="font-bold">عدد العميلات</h3>
+                <h3 className="font-bold">عدد العاملات</h3>
               </div>
 
               <div className="flex gap-2">
@@ -419,7 +426,7 @@ export default function BookingInday() {
               </div>
             )}
             <button
-              onClick={() => navigate("/confirm-payment")}
+              onClick={handelNext}
               className="w-full bg-brandBlue text-white py-3 rounded-lg font-semibold hover:bg-secondary transition"
             >
               التالي

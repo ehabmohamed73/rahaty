@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-scroll";
 // Assets
@@ -9,9 +9,10 @@ import { useNavigate } from "react-router-dom";
 export default function Sidebar({ sidebarOpen, toggleSidebar, userName }) {
   const navigate = useNavigate();
 
-  const isSignedIn = localStorage.getItem("isSignedIn") === "true";
   const storedName = localStorage.getItem("username") || userName;
-
+  const [isSignedIn] = useState(() => {
+    return localStorage.getItem("isSignedIn") === "true";
+  });
   return (
     <Wrapper className="animate darkBg" $sidebarOpen={sidebarOpen}>
       <SidebarHeader className="flexSpaceCenter">

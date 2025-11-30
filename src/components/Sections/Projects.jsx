@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import ProjectBox from "../Elements/ProjectBox";
 import dayimge from "../../assets/img/day.jpg";
-import monthimage from "../../assets/img/month.jpg";
+// import monthimage from "../../assets/img/month.jpg";
 import hospitalityimage from "../../assets/img/ho2.jpg";
 import joinusimage from "../../assets/img/joinus.jpg";
 import { useNavigate } from "react-router-dom";
@@ -15,12 +15,12 @@ export default function Projects() {
       title: "حجز بالساعه",
       text: "خدمة تنظيف شاملة لمنزلك أو مكتبك حسب احتياجاتك بالساعه.",
     },
-    {
-      img: monthimage,
-      path: "/booking-monthly",
-      title: "حجز في الشهر",
-      text: "خدمة تنظيف دورية لمنزلك أو مكتبك على أساس شهري.",
-    },
+    // {
+    //   img: monthimage,
+    //   path: "/booking-monthly",
+    //   title: "حجز في الشهر",
+    //   text: "خدمة تنظيف دورية لمنزلك أو مكتبك على أساس شهري.",
+    // },
     {
       img: hospitalityimage,
       path: "/hospitality-booking",

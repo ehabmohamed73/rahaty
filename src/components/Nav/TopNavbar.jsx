@@ -13,13 +13,12 @@ export default function TopNavbar({ userName = "Ehab" }) {
   const navigate = useNavigate();
   const [sidebarOpen, toggleSidebar] = useState(false);
   // const [isSignIn, setSignIn] = useState(isSignedUser);
-  const isSignedIn = localStorage.getItem("isSignedIn") === "true";
+
   const storedName = localStorage.getItem("username") || userName;
 
-  // Sync with prop changes
-  // useEffect(() => {
-  //   setSignIn(isSignedUser);
-  // }, [isSignedUser]);
+  const [isSignedIn] = useState(() => {
+    return localStorage.getItem("isSignedIn") === "true";
+  });
 
   // Throttled scroll handler
   useEffect(() => {

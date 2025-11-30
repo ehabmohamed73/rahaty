@@ -71,10 +71,10 @@ export default function PhoneLoginPage() {
       console.log("Login attempt with:", { phone, username });
 
       // Navigate after successful validation
-      localStorage.setItem("isSignedIn", "true");
+      localStorage.setItem("login", "true");
       localStorage.setItem("username", username);
 
-      navigate("/");
+      navigate("/otp");
       // navigate("/", { state: { username: username, isSigned: true } });
     } catch (error) {
       setError("حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.");
