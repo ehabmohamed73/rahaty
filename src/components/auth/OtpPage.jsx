@@ -10,7 +10,12 @@ export default function OTPPage() {
   const [isLogin] = useState(() => {
     return localStorage.getItem("login") === "true";
   });
-
+  const handelLoginCheck = () => {
+    if (isLogin) {
+      localStorage.setItem("login", "false");
+      localStorage.setItem("isSignedIn", "true");
+    }
+  };
   useEffect(() => {
     if (isOpen && inputRefs.current[0]) {
       inputRefs.current[0].focus();
@@ -57,7 +62,7 @@ export default function OTPPage() {
     if (otp.every((digit) => digit !== "")) {
       // alert(`تم التحقق من الرمز: ${otp.join("")}`);
       navigate(isLogin ? "/" : "/confirm-payment");
-      localStorage.setItem("isSignedIn", "true");
+      handelLoginCheck();
       setIsOpen(false);
     }
   };
@@ -71,7 +76,7 @@ export default function OTPPage() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center md:items-center md:justify-center p-4 bg-black bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center md:items-center md:justify-center p-4 bg-transparent">
       {/* Modal Container */}
       <div
         className="fixed md:relative bottom-0 left-0 right-0 md:bottom-auto md:left-auto md:right-auto 

@@ -8,7 +8,7 @@ export default function ProjectBox({ img, title, text, action }) {
         className="animate pointer"
         onClick={action ? () => action() : null}
       >
-        <img className="radius8" src={img} alt="project" />
+        <img className="rounded max-h-50" src={img} alt="project" />
       </ImgBtn>
       <h3 className="font20 extraBold text-center">{title}</h3>
       <p className="font13 text-center">{text}</p>
@@ -54,7 +54,6 @@ const ImgBtn = styled.button`
   padding: 0;
   margin: 0;
   width: 100%;
-
   cursor: pointer;
 
   &:hover > img {

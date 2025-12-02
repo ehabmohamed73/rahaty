@@ -105,6 +105,8 @@ export default function ProfilePage() {
             <button
               onClick={() => {
                 localStorage.setItem("isSignedIn", "false");
+                localStorage.removeItem("login");
+                localStorage.removeItem("username");
               }}
               className="w-full flex items-center  p-3 hover:bg-gray-50 rounded-lg transition group"
             >
@@ -127,7 +129,6 @@ export default function ProfilePage() {
             </button>
           </div>
         </div>
-
         {/* قسم العناوين المسجلة - العمود الأيسر */}
         <div className="lg:col-span-2 bg-white rounded-lg shadow-md p-6">
           {choice == "address" && <ListAddress />}

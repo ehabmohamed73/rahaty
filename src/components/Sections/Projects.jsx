@@ -3,7 +3,7 @@ import styled from "styled-components";
 import ProjectBox from "../Elements/ProjectBox";
 import dayimge from "../../assets/img/day.jpg";
 // import monthimage from "../../assets/img/month.jpg";
-import hospitalityimage from "../../assets/img/ho2.jpg";
+import monthimage from "../../assets/img/month.jpg";
 import joinusimage from "../../assets/img/joinus.jpg";
 import { useNavigate } from "react-router-dom";
 export default function Projects() {
@@ -22,7 +22,7 @@ export default function Projects() {
     //   text: "خدمة تنظيف دورية لمنزلك أو مكتبك على أساس شهري.",
     // },
     {
-      img: hospitalityimage,
+      img: monthimage,
       path: "/hospitality-booking",
       title: "حجز ضيافة",
       text: "خدمة تنظيف متخصصه لضمان بيئة نظيفة وصحية للضيوف.",
