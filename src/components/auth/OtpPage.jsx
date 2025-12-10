@@ -1,15 +1,20 @@
+import axios from "axios";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { useLocation } from "react-router-dom";
 export default function OTPPage() {
   const [isOpen, setIsOpen] = useState(true);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
   const navigate = useNavigate();
-
+  const [userId] = useState(() => {
+    return localStorage.getItem("userId");
+  });
+  const location = useLocation();
   const [isLogin] = useState(() => {
     return localStorage.getItem("login") === "true";
   });
+  const [resposeData, setResponseData] = useState([]);
   const handelLoginCheck = () => {
     if (isLogin) {
       localStorage.setItem("login", "false");
@@ -58,19 +63,49 @@ export default function OTPPage() {
     }
   };
 
-  const handleVerify = () => {
-    if (otp.every((digit) => digit !== "")) {
-      // alert(`تم التحقق من الرمز: ${otp.join("")}`);
-      navigate(isLogin ? "/" : "/confirm-payment");
-      handelLoginCheck();
-      setIsOpen(false);
+  const handleVerify = async () => {
+    try {
+      if (otp.every((digit) => digit !== "")) {
+        const respons = await axios.post("http://localhost:3001/users/verify", {
+          id: userId,
+          otpCode: otp.join(""),
+        });
+        setResponseData(respons.data);
+        console.log(resposeData);
+        if (respons.data.success) {
+          navigate("/", { replace: true });
+          handelLoginCheck();
+          setIsOpen(false);
+        } else {
+          alert("غلط في الرمز");
+          setOtp(["", "", "", "", "", ""]);
+          inputRefs.current[0]?.focus();
+        }
+      }
+    } catch (error) {
+      alert("غلط في الرمز");
+      setOtp(["", "", "", "", "", ""]);
+      console.log(error);
     }
   };
 
-  const handleResend = () => {
-    setOtp(["", "", "", "", "", ""]);
-    inputRefs.current[0]?.focus();
-    alert("تم إرسال رمز جديد");
+  const handleResend = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/users/resend-otp",
+        {
+          id: userId,
+        }
+      );
+
+      if (response.data.success) {
+        alert("تم إرسال رمز جديد");
+        setOtp(["", "", "", "", "", ""]);
+        inputRefs.current[0]?.focus();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   if (!isOpen) return null;
@@ -133,10 +168,10 @@ export default function OTPPage() {
 
           {/* Description */}
           <p className="text-center text-gray-600 mb-8">
-            أدخل الرمز المكون من 6 أرقام المرسل إلى
+            أدخل الرمز المكون من 6 أرقام المرسل عبر الوتس اب إلى
             <br />
             <span className="font-semibold text-gray-800">
-              +966 ** *** **34
+              {`+${location.state?.phoneNumber}`}
             </span>
           </p>
 

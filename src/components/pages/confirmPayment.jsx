@@ -1,9 +1,30 @@
 import { useState, useEffect } from "react";
 import { Check, Clock, Users, Calendar, FileText } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function ConfirmPayment() {
+  const navigate = useNavigate();
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [orderCompleted, setOrderCompleted] = useState(false);
+  const [respons, setResponse] = useState([]);
+  const { state } = useLocation();
+  const id = state.bookingId;
+  useEffect(() => {
+    const fetchBooking = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:3001/booking/get-booking/${id}`
+        );
+        setResponse(res.data.data);
+        console.log(res.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (id) fetchBooking();
+  }, [id]);
   // ============================
   // SCROLL TO TOP ON MOUNT
   // ============================
@@ -13,19 +34,42 @@ function ConfirmPayment() {
   }, []);
   // بيانات الطلب الافتراضية (يمكن استبدالها بالبيانات الفعلية)
   const orderDetails = {
-    workers: 2,
-    serviceType: "تنظيف منزل - زيارة واحدة",
-    date: "السبت 15 نوفمبر 2025",
-    time: "09:00 - 13:00",
-    totalPrice: "300 ر.س",
+    workers: respons.workers,
+    serviceType:
+      respons.visitType === "hospitality"
+        ? "ضيافة"
+        : respons.visitType === "monthly"
+        ? "زيارة شهرية"
+        : "زيارة واحدة",
+    date: new Date(respons.oneTimeDate).toLocaleDateString("ar-SR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }),
+    time: respons.selectedTime,
+    totalPrice: respons.totalPrice,
   };
 
-  const handleSubmitOrder = () => {
+  const handleSubmitOrder = async () => {
     if (!acceptedTerms) {
       alert("يرجى الموافقة على الشروط والأحكام أولاً");
       return;
     }
-    setOrderCompleted(true);
+
+    try {
+      const res = await axios.put(
+        `http://localhost:3001/booking/update-status/${id}`,
+        {
+          isSubmitted: true,
+          status: "confirmed",
+        }
+      );
+      if (res.data.success) {
+        setOrderCompleted(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   if (orderCompleted) {
@@ -45,10 +89,13 @@ function ConfirmPayment() {
             سنقوم بالتواصل معك خلال 24 ساعة لتأكيد الموعد
           </p>
           <button
-            onClick={() => setOrderCompleted(false)}
+            onClick={() => {
+              setOrderCompleted(false);
+              navigate("/");
+            }}
             className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300"
           >
-            إنشاء طلب جديد
+            تم الطلب
           </button>
         </div>
       </div>
@@ -58,44 +105,7 @@ function ConfirmPayment() {
   return (
     <div className="min-h-screen bg-gray-50 p-4" dir="rtl">
       {/* ============================ STEPS / TITLE BAR ============================ */}
-      <div className="flex flex-col sm:flex-row justify-center mb-12 sm:justify-between items-center bg-white border-b border-gray-200 p-4">
-        {/* Title: hidden on xs, visible on sm+ */}
-        <h1 className="hidden sm:block text-3xl font-bold text-blue-900 ml-8 text-center md:text-right">
-          التنظيف بالساعة
-        </h1>
 
-        {/* Center steps (keeps centered on mobile too) */}
-        <div className="flex items-center justify-center pt-2 gap-8">
-          <div className="flex flex-col items-center">
-            <div className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-semibold">
-              1
-            </div>
-            <span className="text-sm text-green-600 mt-2 font-semibold">
-              الباقة
-            </span>
-          </div>
-
-          <div className="h-1 w-20 bg-gray-300"></div>
-
-          <div className="flex flex-col items-center">
-            <div className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-semibold">
-              2
-            </div>
-            <span className="text-sm text-green-600 mt-2">الدفع</span>
-          </div>
-        </div>
-
-        {/* Breadcrumbs: visible on sm+ */}
-        <div className="max-w-7xl mx-8 hidden sm:block rtl">
-          <div className="flex items-center justify-center gap-4 text-sm">
-            <span className="text-blue-900 font-semibold">الرئيسية</span>
-            <span className="text-gray-300">←</span>
-            <span className="text-gray-400">التنظيف بالساعة</span>
-            <span className="text-gray-300">←</span>
-            <span className="text-gray-400">إنشاء زيارة جديدة</span>
-          </div>
-        </div>
-      </div>
       <div className="max-w-2xl mx-auto">
         {/* الهيدر */}
         <header className="bg-white rounded-2xl shadow-sm p-6 mb-6">
@@ -190,12 +200,12 @@ function ConfirmPayment() {
 
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between text-gray-600">
-                  <span>عدد العمال</span>
-                  <span>{orderDetails.workers} × 150 ر.س</span>
+                  <span>عدد المدبرات</span>
+                  <span>{orderDetails.workers} </span>
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>نوع الخدمة</span>
-                  <span>زيارة واحدة</span>
+                  <span> {orderDetails.serviceType}</span>
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>الضريبة</span>

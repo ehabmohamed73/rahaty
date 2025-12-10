@@ -3,9 +3,18 @@ import { MapPin, Calendar, GraduationCap, UserRoundPen } from "lucide-react";
 import TopNavbar from "../Nav/TopNavbar";
 import ListAddress from "../Sections/listAdress";
 import AppointmentsPage from "../Sections/Appointments";
+import { useNavigate } from "react-router-dom";
 export default function ProfilePage() {
   const [choice, setChoice] = useState("address");
-
+  const navigate = useNavigate();
+  const logOut = () => {
+    localStorage.setItem("isSignedIn", "false");
+    localStorage.removeItem("login");
+    localStorage.removeItem("username");
+    localStorage.removeItem("userId");
+    navigate("/");
+    window.location.reload();
+  };
   return (
     <div className="min-h-screen bg-gray-100 p-6" dir="rtl">
       <TopNavbar />
@@ -103,11 +112,7 @@ export default function ProfilePage() {
               </span>
             </button>
             <button
-              onClick={() => {
-                localStorage.setItem("isSignedIn", "false");
-                localStorage.removeItem("login");
-                localStorage.removeItem("username");
-              }}
+              onClick={logOut}
               className="w-full flex items-center  p-3 hover:bg-gray-50 rounded-lg transition group"
             >
               <svg

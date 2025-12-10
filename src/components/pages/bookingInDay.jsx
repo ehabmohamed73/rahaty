@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Book, MapPin, Plus } from "lucide-react";
+import { Book, ImageOff, MapPin, Plus } from "lucide-react";
 import TopNavbar from "../Nav/TopNavbar";
 import BookingCalendar from "../Elements/BookingCalender";
 import { useNavigate } from "react-router-dom";
-import { addressesList } from "../constants/staticData";
+import axios from "axios";
+import StepBooking from "../Elements/stepBooking";
+import AddAddressModal from "../Sections/AddAddress";
+
 export default function BookingInday() {
   // ============================
   // STATES
@@ -14,12 +17,35 @@ export default function BookingInday() {
   const [visitType, setVisitType] = useState("");
   const [selectedDates, setSelectedDates] = useState([]);
   const [mothlyPackage, setMonthlyPackage] = useState("");
-  const [hasAddress, setHasAddress] = useState(addressesList);
+  const [hasAddress, setHasAddress] = useState([]);
   const [addressSelected, setAddressSelected] = useState(false);
+  const [openPopUp, setOpenPopUp] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState("");
   const [isSignedIn] = useState(() => {
     return localStorage.getItem("isSignedIn") === "true";
   });
+  const [weekDay, setWeekDay] = useState("");
   const navigate = useNavigate();
+  const [userId] = useState(() => {
+    return localStorage.getItem("userId");
+  });
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:3001/address?userId=${userId}`
+        );
+
+        if (res.data.success) {
+          setHasAddress(res.data.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchAddresses();
+  }, [userId]);
   // تنسيق التاريخ المختار
   const formatDate = (dateString) => {
     if (!dateString) return "";
@@ -33,7 +59,7 @@ export default function BookingInday() {
   };
   /// التحكم في زر المتابعه
   const handelNext = () => {
-    navigate(isSignedIn ? "/confirm-payment" : "/confirm-phone");
+    visitType === "single" ? handelDayBooking() : handelMonthlyBooking();
   };
 
   // ============================
@@ -49,49 +75,63 @@ export default function BookingInday() {
   // fake calculation
   const totalPrice = workers * (visitDuration === "morning" ? 150 : 140);
 
+  const handelDayBooking = async () => {
+    try {
+      const res = await axios.post("http://localhost:3001/booking", {
+        user_id: userId,
+        address_id: selectedAddress,
+        workers: workers,
+        visitType: "one_time",
+        selectedTime: selectedTime,
+        totalPrice: totalPrice,
+        oneTimeDate: selectedDates,
+        visitDuration:
+          visitDuration == "morning" || visitDuration == "evening"
+            ? "4_houre"
+            : "8_houre",
+        period: visitDuration,
+      });
+      if (res.data.success) {
+        navigate("/confirm-payment", {
+          state: { bookingId: res.data.booking.id },
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handelMonthlyBooking = async () => {
+    try {
+      const res = await axios.post("http://localhost:3001/booking", {
+        user_id: userId,
+        address_id: selectedAddress,
+        workers: workers,
+        visitType: "monthly",
+        selectedTime: selectedTime,
+        totalPrice: totalPrice,
+        monthlyPackage: mothlyPackage,
+        selectedDays: [weekDay],
+        visitDuration:
+          visitDuration == "morning" || visitDuration == "evening"
+            ? "4_houre"
+            : "8_houre",
+        period: visitDuration,
+      });
+      if (res.data.success) {
+        navigate("/confirm-payment", {
+          state: { bookingId: res.data.booking.id },
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8 mt-20" dir="rtl">
       {/* ============================ HEADER ============================ */}
       <TopNavbar />
-      {/* ============================ STEPS / TITLE BAR ============================ */}
-      <div className="flex flex-col sm:flex-row justify-center sm:justify-between items-center bg-white border-b border-gray-200 p-4">
-        {/* Title: hidden on xs, visible on sm+ */}
-        <h1 className="hidden sm:block text-3xl font-bold text-blue-900 ml-8 text-center md:text-right">
-          التنظيف بالساعة
-        </h1>
-
-        {/* Center steps (keeps centered on mobile too) */}
-        <div className="flex items-center justify-center pt-2 gap-8">
-          <div className="flex flex-col items-center">
-            <div className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-semibold">
-              ✓
-            </div>
-            <span className="text-sm text-green-600 mt-2 font-semibold">
-              الباقة
-            </span>
-          </div>
-
-          <div className="h-1 w-20 bg-gray-300"></div>
-
-          <div className="flex flex-col items-center">
-            <div className="w-10 h-10 rounded-full bg-gray-300 text-white flex items-center justify-center font-semibold">
-              2
-            </div>
-            <span className="text-sm text-gray-500 mt-2">الدفع</span>
-          </div>
-        </div>
-
-        {/* Breadcrumbs: visible on sm+ */}
-        <div className="max-w-7xl mx-8 hidden sm:block rtl">
-          <div className="flex items-center justify-center gap-4 text-sm">
-            <span className="text-blue-900 font-semibold">الرئيسية</span>
-            <span className="text-gray-300">←</span>
-            <span className="text-gray-400">التنظيف بالساعة</span>
-            <span className="text-gray-300">←</span>
-            <span className="text-gray-400">إنشاء زيارة جديدة</span>
-          </div>
-        </div>
-      </div>
+      <StepBooking text={" التنظيف بالساعة"} />
 
       {/* ============================ MAIN GRID ============================ */}
       <div className="max-w-7xl mx-auto px-2 py-8 md:px-4">
@@ -289,7 +329,10 @@ export default function BookingInday() {
               !addressSelected &&
               hasAddress.map((address) => (
                 <div
-                  onClick={() => setAddressSelected(true)}
+                  onClick={() => {
+                    setAddressSelected(true);
+                    setSelectedAddress(address.id);
+                  }}
                   key={address.id}
                   className=" bg-lightGray rounded-lg p-4 m-4"
                 >
@@ -311,7 +354,7 @@ export default function BookingInday() {
                 {visitType === "monthly" && (
                   <div className="p-6">
                     <h2 className="text-xl font-bold text-blue-700 mb-4">
-                      نوع الباقه الشهريه{" "}
+                      نوع الباقه الشهريه
                     </h2>
 
                     <div className="grid grid-cols-3 gap-2">
@@ -363,8 +406,82 @@ export default function BookingInday() {
                         <span className="text-xs">٤ زيارات في الشهر </span>
                       </button>
                     </div>
+                    <div className="text-xl font-bold text-orange-500 my-4">
+                      اختار اليوم
+                    </div>
+                    <button
+                      onClick={() => setWeekDay("Sunday")}
+                      className={`p-3 mb-2 mx-1 text-sm rounded-lg border ${
+                        weekDay === "Sunday"
+                          ? "bg-orange-50 border-orange-500 text-orange-600"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      الاحد <br />
+                    </button>
+                    <button
+                      onClick={() => setWeekDay("Monday")}
+                      className={`p-3 mb-2 mx-1 text-sm rounded-lg border ${
+                        weekDay === "Monday"
+                          ? "bg-orange-50 border-orange-500 text-orange-600"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      الاثنين <br />
+                    </button>
+                    <button
+                      onClick={() => setWeekDay("Tuesday")}
+                      className={`p-3 mb-2 mx-1 text-sm rounded-lg border ${
+                        weekDay === "Tuesday"
+                          ? "bg-orange-50 border-orange-500 text-orange-600"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      الثلاثاء <br />
+                    </button>
+                    <button
+                      onClick={() => setWeekDay("Wednesday")}
+                      className={`p-3 mb-2 mx-1 text-sm rounded-lg border ${
+                        weekDay === "Wednesday"
+                          ? "bg-orange-50 border-orange-500 text-orange-600"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      الاربعاء <br />
+                    </button>
+                    <button
+                      onClick={() => setWeekDay("Thursday")}
+                      className={`p-3 mb-2 mx-1 text-sm rounded-lg border ${
+                        weekDay === "Thursday"
+                          ? "bg-orange-50 border-orange-500 text-orange-600"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      الخميس <br />
+                    </button>
+                    <button
+                      onClick={() => setWeekDay("Friday")}
+                      className={`p-3 mb-2 mx-1 text-sm rounded-lg border ${
+                        weekDay === "Friday"
+                          ? "bg-orange-50 border-orange-500 text-orange-600"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      الجمعه <br />
+                    </button>
+                    <button
+                      onClick={() => setWeekDay("Saturday")}
+                      className={`p-3 mb-2 mx-1 text-sm rounded-lg border ${
+                        weekDay === "Saturday"
+                          ? "bg-orange-50 border-orange-500 text-orange-600"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      السبت <br />
+                    </button>
                   </div>
                 )}
+
                 {visitType === "single" && (
                   <div className="p-2">
                     <BookingCalendar onSelectDates={setSelectedDates} />
@@ -372,7 +489,8 @@ export default function BookingInday() {
                 )}
               </div>
             )}
-            {hasAddress.length == 0 && (
+
+            {isSignedIn && hasAddress <= 0 && (
               <div className="space-y-6">
                 <div className="flex flex-col items-center justify-center py-12">
                   <MapPin className="w-24 h-24 text-gray-300 mb-4" />
@@ -380,7 +498,25 @@ export default function BookingInday() {
                     لا توجد أي عناوين مسجلة
                   </p>
                   <button
-                    onClick={() => setHasAddress(true)}
+                    onClick={() => setOpenPopUp(true)}
+                    className="mt-6 bg-blue-900 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-800 transition"
+                  >
+                    إضافة عنوان جديد
+                  </button>
+                </div>
+              </div>
+            )}
+            {!isSignedIn && hasAddress == 0 && (
+              <div className="space-y-6">
+                <div className="flex flex-col items-center justify-center py-12">
+                  <MapPin className="w-24 h-24 text-gray-300 mb-4" />
+                  <p className="text-gray-500 text-center">
+                    لا توجد أي عناوين مسجلة
+                  </p>
+                  <button
+                    onClick={() => {
+                      navigate("/login");
+                    }}
                     className="mt-6 bg-blue-900 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-800 transition"
                   >
                     إضافة عنوان جديد
@@ -431,6 +567,12 @@ export default function BookingInday() {
             >
               التالي
             </button>
+            {/* البوب اب */}
+            <AddAddressModal
+              isOpen={openPopUp}
+              onClose={() => setOpenPopUp(false)}
+              // onSave={handleAddAddress}
+            />
           </div>
         </div>
       </div>

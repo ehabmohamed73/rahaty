@@ -7,7 +7,7 @@ import LogoIcon from "../../assets/svg/Logo";
 import BurgerIcon from "../../assets/svg/BurgerIcon";
 import { useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
-
+import { Link as RouterLink } from "react-router-dom";
 export default function TopNavbar({ userName = "Ehab" }) {
   const [y, setY] = useState(window.scrollY);
   const navigate = useNavigate();
@@ -81,6 +81,9 @@ export default function TopNavbar({ userName = "Ehab" }) {
           <UlWrapper className="flexNullCenter">
             <li className="semiBold font15 pointer">
               <Link
+                onClick={() => {
+                  navigate("/", { replace: true });
+                }}
                 activeClass="active"
                 style={{ padding: "10px 15px" }}
                 to="home"

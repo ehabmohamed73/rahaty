@@ -8,14 +8,14 @@ export default function BookingCalendar({ onSelectDates }) {
   const [selectedDates, setSelectedDates] = useState([]); // التواريخ المختارة من قبل المستخدم
 
   // الأيام المحجوزة (لا يمكن اختيارها)
-  const bookedDates = ["2025-11-25", "2025-11-23", "2025-11-20"];
+  const bookedDates = ["2025-12-25", "2025-12-23", "2025-12-20"];
 
   // تحويل الأيام المحجوزة إلى أحداث تظهر باللون الأحمر
   const bookedEvents = bookedDates.map((d) => ({
     title: "محجوز",
     start: d,
     display: "background",
-    backgroundColor: "#FFC107",
+    backgroundColor: "#ff758f",
     classNames: ["booked-day"],
   }));
   useEffect(() => {

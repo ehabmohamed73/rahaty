@@ -3,25 +3,48 @@ import { Book, MapPin, Plus } from "lucide-react";
 import TopNavbar from "../Nav/TopNavbar";
 import BookingCalendar from "../Elements/BookingCalender";
 import { useNavigate } from "react-router-dom";
-import {
-  eightHours,
-  fourHours,
-  sixHours,
-  addressesList,
-} from "../constants/staticData";
+import { eightHours, fourHours, sixHours } from "../constants/staticData";
+import AddAddressModal from "../Sections/AddAddress";
+import axios from "axios";
+import StepBooking from "../Elements/stepBooking";
 export default function HospitalityBooking() {
   // ============================
   // STATES
   // ============================
+  const [userId] = useState(() => {
+    return localStorage.getItem("userId");
+  });
+  const [isSignedIn] = useState(() => {
+    return localStorage.getItem("isSignedIn") === "true";
+  });
+  const [openPopUp, setOpenPopUp] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState("");
   const [workers, setWorkers] = useState(2);
   const [visitDuration, setVisitDuration] = useState("4hours");
   const [selectedTime, setSelectedTime] = useState("");
-  //   const [visitType, setVisitType] = useState("");
   const [selectedDates, setSelectedDates] = useState([]);
-  //   const [mothlyPackage, setMonthlyPackage] = useState("");
-  const [hasAddress, setHasAddress] = useState(addressesList);
+  const [hasAddress, setHasAddress] = useState([]);
   const [addressSelected, setAddressSelected] = useState(false);
   const navigate = useNavigate();
+  /// جلب العناوين المسجه
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:3001/address?userId=${userId}`
+        );
+
+        if (res.data.success) {
+          setHasAddress(res.data.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchAddresses();
+  }, [userId]);
+
   // تنسيق التاريخ المختار
   const formatDate = (dateString) => {
     if (!dateString) return "";
@@ -44,53 +67,36 @@ export default function HospitalityBooking() {
   // ============================
   // FAKE TOTAL PRICE CALCULATION
   // ============================
-  // fake calculation
   const totalPrice = workers * (visitDuration === "morning" ? 150 : 140);
+
+  //// اضافه الحجز
+  const handelSubmit = async () => {
+    try {
+      const res = await axios.post("http://localhost:3001/booking", {
+        user_id: userId,
+        address_id: selectedAddress,
+        workers: workers,
+        visitType: "hospitality",
+        selectedTime: selectedTime,
+        totalPrice: totalPrice,
+        oneTimeDate: selectedDates,
+        visitDuration: visitDuration,
+      });
+      if (res.data.success) {
+        navigate("/confirm-payment", {
+          state: { bookingId: res.data.booking.id },
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8 mt-20" dir="rtl">
       {/* ============================ HEADER ============================ */}
       <TopNavbar />
-      {/* ============================ STEPS / TITLE BAR ============================ */}
-      <div className="flex flex-col sm:flex-row justify-center sm:justify-between items-center bg-white border-b border-gray-200 p-4">
-        {/* Title: hidden on xs, visible on sm+ */}
-        <h1 className="hidden sm:block text-3xl font-bold text-blue-900 ml-8 text-center md:text-right">
-          خدمات الضيافه
-        </h1>
-
-        {/* Center steps (keeps centered on mobile too) */}
-        <div className="flex items-center justify-center pt-2 gap-8">
-          <div className="flex flex-col items-center">
-            <div className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-semibold">
-              ✓
-            </div>
-            <span className="text-sm text-green-600 mt-2 font-semibold">
-              الباقة
-            </span>
-          </div>
-
-          <div className="h-1 w-20 bg-gray-300"></div>
-
-          <div className="flex flex-col items-center">
-            <div className="w-10 h-10 rounded-full bg-gray-300 text-white flex items-center justify-center font-semibold">
-              2
-            </div>
-            <span className="text-sm text-gray-500 mt-2">الدفع</span>
-          </div>
-        </div>
-
-        {/* Breadcrumbs: visible on sm+ */}
-        <div className="max-w-7xl mx-8 hidden sm:block rtl">
-          <div className="flex items-center justify-center gap-4 text-sm">
-            <span className="text-blue-900 font-semibold">الرئيسية</span>
-            <span className="text-gray-300">←</span>
-            <span className="text-gray-400"> الضيافه</span>
-            <span className="text-gray-300">←</span>
-            <span className="text-gray-400">إنشاء طلب</span>
-          </div>
-        </div>
-      </div>
-
+      <StepBooking text={"خدمه الضيافه"} />
       {/* ============================ MAIN GRID ============================ */}
       <div className="max-w-7xl mx-auto px-2 py-8 md:px-4">
         {/* 1 column mobile — 3 columns desktop */}
@@ -258,13 +264,17 @@ export default function HospitalityBooking() {
               </div>
             </div> */}
           </div>
+
           {/* ============================ COLUMN 2 (RIGHT SIDE) ============================ */}
           <div className="bg-white rounded-lg shadow-sm h-120">
             {hasAddress.length > 0 &&
               !addressSelected &&
               hasAddress.map((address) => (
                 <div
-                  onClick={() => setAddressSelected(true)}
+                  onClick={() => {
+                    setAddressSelected(true);
+                    setSelectedAddress(address.id);
+                  }}
                   key={address.id}
                   className=" bg-lightGray rounded-lg p-4 m-4"
                 >
@@ -289,7 +299,7 @@ export default function HospitalityBooking() {
                 </div>
               </div>
             )}
-            {!hasAddress && (
+            {isSignedIn && hasAddress <= 0 && (
               <div className="space-y-6">
                 <div className="flex flex-col items-center justify-center py-12">
                   <MapPin className="w-24 h-24 text-gray-300 mb-4" />
@@ -297,7 +307,25 @@ export default function HospitalityBooking() {
                     لا توجد أي عناوين مسجلة
                   </p>
                   <button
-                    onClick={() => setHasAddress(true)}
+                    onClick={() => setOpenPopUp(true)}
+                    className="mt-6 bg-blue-900 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-800 transition"
+                  >
+                    إضافة عنوان جديد
+                  </button>
+                </div>
+              </div>
+            )}
+            {!isSignedIn && hasAddress == 0 && (
+              <div className="space-y-6">
+                <div className="flex flex-col items-center justify-center py-12">
+                  <MapPin className="w-24 h-24 text-gray-300 mb-4" />
+                  <p className="text-gray-500 text-center">
+                    لا توجد أي عناوين مسجلة
+                  </p>
+                  <button
+                    onClick={() => {
+                      navigate("/login");
+                    }}
                     className="mt-6 bg-blue-900 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-800 transition"
                   >
                     إضافة عنوان جديد
@@ -338,11 +366,17 @@ export default function HospitalityBooking() {
               </div>
             )}
             <button
-              onClick={() => navigate("/confirm-payment")}
+              onClick={handelSubmit}
               className="w-full bg-brandBlue text-white py-3 rounded-lg font-semibold hover:bg-secondary transition"
             >
               التالي
             </button>
+            {/* البوب اب */}
+            <AddAddressModal
+              isOpen={openPopUp}
+              onClose={() => setOpenPopUp(false)}
+              // onSave={handleAddAddress}
+            />
           </div>
         </div>
       </div>

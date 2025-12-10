@@ -1,25 +1,44 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Trash2, Edit } from "lucide-react";
 import AddAddressModal from "../Sections/AddAddress";
-import { addressesList } from "../constants/staticData";
+import axios from "axios";
 export default function ListAddress() {
   const [openPopUp, setOpenPopUp] = useState(false);
-  const [addresses, setAddresses] = useState(addressesList);
-
-  const deleteAddress = (id) => {
-    setAddresses(addresses.filter((addr) => addr.id !== id));
+  const [addresses, setAddresses] = useState([]);
+  const [userId] = useState(() => {
+    return localStorage.getItem("userId");
+  });
+  const deleteAddress = async (id) => {
+    try {
+      const res = await axios.delete(
+        `http://localhost:3001/address/delete/${id}`
+      );
+      if (res.data.success) {
+        setAddresses(addresses.filter((addr) => addr.id !== id));
+        alert(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleAddAddress = (newAddress) => {
-    const newAddr = {
-      id: Date.now(),
-      addressName: newAddress.addressName,
-      fullAddress: newAddress.fullAddress,
-      detailedAddress: newAddress.detailedAddress,
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:3001/address?userId=${userId}`
+        );
+
+        if (res.data.success) {
+          setAddresses(res.data.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
     };
-    setAddresses((prev) => [...prev, newAddr]);
-    setOpenPopUp(false); // إغلاق البوب اب بعد الإضافة
-  };
+
+    fetchAddresses();
+  }, [userId]);
 
   return (
     <>
@@ -69,7 +88,7 @@ export default function ListAddress() {
       <AddAddressModal
         isOpen={openPopUp}
         onClose={() => setOpenPopUp(false)}
-        onSave={handleAddAddress}
+        // onSaveed={fetchAddresses}
       />
     </>
   );

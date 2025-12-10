@@ -10,6 +10,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import bg from "../../assets/img/join-us.jpg";
+import axios from "axios";
 export default function JoinUsPage() {
   const [formData, setFormData] = useState({
     name: "",
@@ -45,13 +46,26 @@ export default function JoinUsPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
     // محاكاة إرسال البيانات
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSubmitted(true);
-      console.log("بيانات الطلب:", formData);
-    }, 2000);
+    try {
+      const res = await axios.post(
+        "http://localhost:3001/join/apply",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (res.data.success) {
+        setIsSubmitted(true);
+      } else {
+        alert(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      alert("غلط في ارسال البيانات");
+    }
   };
 
   if (isSubmitted) {

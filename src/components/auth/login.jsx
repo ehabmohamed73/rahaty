@@ -2,14 +2,15 @@ import { useState } from "react";
 import { Smartphone, ArrowRight, User, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { FloatingButtons } from "../Buttons/FloatingButton";
-
+import axios from "axios";
 export default function PhoneLoginPage() {
   const [phone, setPhone] = useState("");
   const [username, setUserName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
+  // eslint-disable-next-line no-unused-vars
+  const [loginUser, setLoginUser] = useState([]);
   const handlePhoneChange = (e) => {
     const value = e.target.value.replace(/[^\d+]/g, "");
     setPhone(value);
@@ -18,36 +19,35 @@ export default function PhoneLoginPage() {
 
   const handleUserNameChange = (e) => {
     const value = e.target.value.replace(
-      /[^a-zA-Z\u0600-\u06FF\u0750-\u077F\s\-']/g,
-      ""
+      /[^a-zA-Z\u0600-\u06FF\u0750-\u077F\s\-']/g
     );
     const limitedValue = value.slice(0, 30);
     setUserName(limitedValue);
     setError("");
   };
 
-  const validateSyrianPhone = () => {
-    // إزالة أي شيء غير أرقام
-    let cleaned = phone.replace(/\D/g, "");
+  // const validateSyrianPhone = () => {
+  //   // إزالة أي شيء غير أرقام
+  //   let cleaned = phone.replace(/\D/g, "");
 
-    // تحويل الصيغ المختلفة إلى رقم يبدأ بـ 09
-    if (cleaned.startsWith("963")) {
-      cleaned = "0" + cleaned.slice(3);
-    } else if (cleaned.startsWith("9") && cleaned.length === 9) {
-      cleaned = "0" + cleaned;
-    }
+  //   // تحويل الصيغ المختلفة إلى رقم يبدأ بـ 09
+  //   if (cleaned.startsWith("963")) {
+  //     cleaned = "0" + cleaned.slice(3);
+  //   } else if (cleaned.startsWith("9") && cleaned.length === 9) {
+  //     cleaned = "0" + cleaned;
+  //   }
 
-    // التحقق من الصيغة النهائية
-    const syrianPhoneRegex = /^09\d{8}$/;
+  //   // التحقق من الصيغة النهائية
+  //   const syrianPhoneRegex = /^09\d{8}$/;
 
-    if (!syrianPhoneRegex.test(cleaned)) {
-      setError("الرجاء إدخال رقم جوال سوري صحيح (يبدأ بـ 09 ويكون 10 أرقام)");
-      return false;
-    }
+  //   if (!syrianPhoneRegex.test(cleaned)) {
+  //     setError("الرجاء إدخال رقم جوال سوري صحيح (يبدأ بـ 09 ويكون 10 أرقام)");
+  //     return false;
+  //   }
 
-    setPhone(cleaned);
-    return true;
-  };
+  //   setPhone(cleaned);
+  //   return true;
+  // };
 
   const validateForm = () => {
     if (username.trim().length < 2) {
@@ -55,30 +55,43 @@ export default function PhoneLoginPage() {
       return false;
     }
 
-    return validateSyrianPhone();
+    // return validateSyrianPhone();
   };
 
   const handleSubmit = async () => {
-    if (!validateForm()) return;
+    // if (!validateForm()) {
+    //   alert("الرجاء التحقق من البيانات المدخلة.");
+    //   return;
+    // }
 
     setIsLoading(true);
     setError("");
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const response = await axios.post("http://localhost:3001/users/login", {
+        phone: `+${phone}`,
+        userName: username,
+      });
 
-      console.log("Login attempt with:", { phone, username });
+      // حفظ بيانات المستخدم
+      setLoginUser(response.data);
 
-      // Navigate after successful validation
-      localStorage.setItem("login", "true");
-      localStorage.setItem("username", username);
-
-      navigate("/otp");
-      // navigate("/", { state: { username: username, isSigned: true } });
+      console.log("Login response:", response.data);
+      if (response.data.success) {
+        // حفظ بيانات في localStorage
+        localStorage.setItem("login", "true");
+        localStorage.setItem("username", username);
+        localStorage.setItem("userId", response.data.userId);
+      } else {
+        setError(
+          "فشل في تسجيل الدخول. يرجى التحقق من البيانات والمحاولة مرة أخرى."
+        );
+      }
+      // الذهاب لصفحة OTP
+      navigate("/otp", { state: { phoneNumber: phone } });
     } catch (error) {
+      console.error("Login error:", error);
       setError("حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.");
-      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -120,100 +133,102 @@ export default function PhoneLoginPage() {
           </div>
 
           {/* Form */}
-          <div className="space-y-6">
-            {/* Username Field */}
-            <div className="space-y-3">
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium text-gray-700"
-              >
-                الاسم الكريم
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="username"
-                  value={username}
-                  onChange={handleUserNameChange}
-                  onKeyPress={handleKeyPress}
-                  placeholder="أدخل اسمك الكامل"
-                  className={`w-full px-4 py-4 pr-12 text-lg border-2 rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 ${
-                    error && username.length < 2
-                      ? "border-red-300 focus:border-red-500 focus:ring-red-200"
-                      : "border-gray-200 focus:border-blue-500 focus:ring-blue-200"
-                  }`}
-                  dir="rtl"
-                  disabled={isLoading}
-                />
-                <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                  <User className="w-5 h-5 text-gray-400" />
+          <form>
+            <div className="space-y-6">
+              {/* Username Field */}
+              <div className="space-y-3">
+                <label
+                  htmlFor="username"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  الاسم الكريم
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    id="username"
+                    value={username}
+                    onChange={handleUserNameChange}
+                    onKeyPress={handleKeyPress}
+                    placeholder="أدخل اسمك الكامل"
+                    className={`w-full px-4 py-4 pr-12 text-lg border-2 rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 ${
+                      error && username.length < 2
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-200"
+                        : "border-gray-200 focus:border-blue-500 focus:ring-blue-200"
+                    }`}
+                    dir="rtl"
+                    disabled={isLoading}
+                  />
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2">
+                    <User className="w-5 h-5 text-gray-400" />
+                  </div>
+                </div>
+                <div className="flex justify-between items-center text-xs text-gray-500">
+                  <span>يسمح بحروف عربية وإنجليزية فقط</span>
+                  <span>{username.length}/30</span>
                 </div>
               </div>
-              <div className="flex justify-between items-center text-xs text-gray-500">
-                <span>يسمح بحروف عربية وإنجليزية فقط</span>
-                <span>{username.length}/30</span>
-              </div>
-            </div>
 
-            {/* Phone Field */}
-            <div className="space-y-3">
-              <label
-                htmlFor="phone"
-                className="block text-sm font-medium text-gray-700"
-              >
-                رقم الجوال
-              </label>
-              <div className="relative">
-                <input
-                  type="tel"
-                  id="phone"
-                  value={phone}
-                  onChange={handlePhoneChange}
-                  onKeyPress={handleKeyPress}
-                  placeholder="09XX XXX XXX"
-                  className={`w-full px-10 py-4 pr-12 text-lg border-2 rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 ${
-                    error && phone.length < 10
-                      ? "border-red-300 focus:border-red-500 focus:ring-red-200"
-                      : "border-gray-200 focus:border-blue-500 focus:ring-blue-200"
-                  }`}
-                  disabled={isLoading}
-                  dir="ltr"
-                />
-                <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                  <Smartphone className="w-5 h-5 text-gray-400" />
+              {/* Phone Field */}
+              <div className="space-y-3">
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  رقم الجوال
+                </label>
+                <div className="relative">
+                  <input
+                    type="tel"
+                    id="phone"
+                    value={phone}
+                    onChange={handlePhoneChange}
+                    onKeyPress={handleKeyPress}
+                    placeholder="09XX XXX XXX"
+                    className={`w-full px-10 py-4 pr-12 text-lg border-2 rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 ${
+                      error && phone.length < 10
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-200"
+                        : "border-gray-200 focus:border-blue-500 focus:ring-blue-200"
+                    }`}
+                    disabled={isLoading}
+                    dir="ltr"
+                  />
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2">
+                    <Smartphone className="w-5 h-5 text-gray-400" />
+                  </div>
+                </div>
+                <div className="text-xs text-gray-500">
+                  أدخل رقم الجوال السوري (يبدأ بـ 09)
                 </div>
               </div>
-              <div className="text-xs text-gray-500">
-                أدخل رقم الجوال السوري (يبدأ بـ 09)
-              </div>
-            </div>
 
-            {/* Error Message */}
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-sm text-red-600 text-center">{error}</p>
-              </div>
-            )}
-
-            {/* Submit Button */}
-            <button
-              onClick={handleSubmit}
-              disabled={isLoading}
-              className="w-full bg-linear-to-r from-blue-500 to-purple-600 text-white py-4 rounded-xl font-semibold hover:shadow-lg transform transition-all duration-300 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-            >
-              {isLoading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>جاري التسجيل...</span>
-                </>
-              ) : (
-                <>
-                  <span>متابعة</span>
-                  <ArrowLeft className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </>
+              {/* Error Message */}
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600 text-center">{error}</p>
+                </div>
               )}
-            </button>
-          </div>
+
+              {/* Submit Button */}
+              <button
+                onClick={handleSubmit}
+                disabled={isLoading}
+                className="w-full bg-linear-to-r from-blue-500 to-purple-600 text-white py-4 rounded-xl font-semibold hover:shadow-lg transform transition-all duration-300 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>جاري التسجيل...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>متابعة</span>
+                    <ArrowLeft className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
 
           {/* Footer */}
           <div className="pt-6 border-t border-gray-100 text-center">
